@@ -12,10 +12,11 @@ workflow annotateRsid_VCFs {
         File vcf_file
         File tabix_file
         File dbsnp_vcf_file
+        File dbsnp_tbi_file
     }
 
     call run_annotating { 
-            input: vcf = vcf_file, tabix = tabix_file, dbsnp_vcf = dbsnp_vcf_file
+            input: vcf = vcf_file, tabix = tabix_file, dbsnp_vcf = dbsnp_vcf_file, dbsnp_tbi = dbsnp_tbi_file
     }
 
     output {
@@ -30,6 +31,7 @@ task run_annotating {
         File vcf
         File tabix
         File dbsnp_vcf
+        File dbsnp_tbi
         Int memSizeGB = 8
         Int threadCount = 2
         Int diskSizeGB = 3*round(size(vcf, "GB")) + 20
@@ -40,6 +42,7 @@ task run_annotating {
     mv ~{tabix} ~{vcf}.tbi
     bcftools annotate --set-id '%CHROM\_%POS\_%REF\_%FIRST_ALT' -Oz -o ~{out_name}.id.vcf.gz ~{vcf}
     tabix -p vcf ~{out_name}.id.vcf.gz
+    mv ~{dbsnp_tbi} ~{dbsnp_vcf}.tbi
     bcftools annotate -a ~{dbsnp_vcf} -c ID -o ~{out_name}.annotated.vcf.gz ~{out_name}.id.vcf.gz
     tabix -p vcf ~{out_name}.annotated.vcf.gz
     >>>
