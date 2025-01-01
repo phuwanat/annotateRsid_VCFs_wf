@@ -34,7 +34,7 @@ task run_annotating {
         File dbsnp_tbi
         Int memSizeGB = 8
         Int threadCount = 2
-        Int diskSizeGB = 3*round(size(vcf, "GB")) + 20
+        Int diskSizeGB = 3*round(size(vcf, "GB")) + 50
     String out_name = basename(vcf, ".vcf.gz")
     }
     
