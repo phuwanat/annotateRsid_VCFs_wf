@@ -3,7 +3,7 @@ version 1.0
 workflow annotateRsid_VCFs {
 
     meta {
-	author: "Phuwanat Sakornsakolpat"
+    author: "Phuwanat Sakornsakolpat"
         email: "phuwanat.sak@mahidol.edu"
         description: "annotate VCF with rsid from dbsnp"
     }
@@ -15,8 +15,8 @@ workflow annotateRsid_VCFs {
     }
 
     call run_annotating { 
-			input: vcf = vcf_file, tabix = tabix_file, dbsnp_vcf = dbsnp_vcf_file
-	}
+            input: vcf = vcf_file, tabix = tabix_file, dbsnp_vcf = dbsnp_vcf_file
+    }
 
     output {
         File annotated_vcf = run_annotating.out_file
@@ -32,15 +32,15 @@ task run_annotating {
         Int memSizeGB = 8
         Int threadCount = 2
         Int diskSizeGB = 3*round(size(vcf, "GB")) + 20
-	String out_name = basename(vcf, ".vcf.gz")
+    String out_name = basename(vcf, ".vcf.gz")
     }
     
     command <<<
-	mv ~{tabix} ~{vcf}.tbi
+    mv ~{tabix} ~{vcf}.tbi
     bcftools annotate --set-id '%CHROM\_%POS\_%REF\_%FIRST_ALT' -Oz -o ~{out_name}.id.vcf.gz ~{vcf}
-	tabix -p vcf ~{out_name}.id.vcf.gz
-	bcftools annotate -a ~{dbsnp_vcf} -c ID -o ~{out_name}.annotated.vcf.gz ~{out_name}.id.vcf.gz
-	tabix -p vcf ~{out_name}.annotated.vcf.gz
+    tabix -p vcf ~{out_name}.id.vcf.gz
+    bcftools annotate -a ~{dbsnp_vcf} -c ID -o ~{out_name}.annotated.vcf.gz ~{out_name}.id.vcf.gz
+    tabix -p vcf ~{out_name}.annotated.vcf.gz
     >>>
 
     output {
