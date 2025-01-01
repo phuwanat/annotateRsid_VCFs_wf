@@ -29,6 +29,7 @@ task run_annotating {
     input {
         File vcf
         File tabix
+        File dbsnp_vcf
         Int memSizeGB = 8
         Int threadCount = 2
         Int diskSizeGB = 3*round(size(vcf, "GB")) + 20
